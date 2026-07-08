@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2E6BFF"/>
+      <stop offset="55%" stop-color="#0057FF"/>
+      <stop offset="100%" stop-color="#0033A0"/>
+    </linearGradient>
+    <linearGradient id="cardBack" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8FB3FF"/>
+      <stop offset="100%" stop-color="#5C8CFF"/>
+    </linearGradient>
+    <linearGradient id="cardMid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D8E4FF"/>
+      <stop offset="100%" stop-color="#AFC7FF"/>
+    </linearGradient>
+    <linearGradient id="cardFront" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F0F4FF"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- soft ambient glow -->
+  <ellipse cx="512" cy="220" rx="480" ry="260" fill="#FFFFFF" opacity="0.08"/>
+
+  <!-- stacked cards, fanned like Apple Wallet -->
+  <g transform="translate(512,512) scale(0.82)">
+    <!-- back card -->
+    <g transform="rotate(-13)">
+      <rect x="-260" y="-165" width="520" height="330" rx="42" fill="url(#cardBack)"/>
+    </g>
+    <!-- middle card -->
+    <g transform="rotate(7)">
+      <rect x="-260" y="-165" width="520" height="330" rx="42" fill="url(#cardMid)"/>
+    </g>
+    <!-- front card -->
+    <g transform="rotate(-2)">
+      <rect x="-270" y="-172" width="540" height="344" rx="44" fill="url(#cardFront)"/>
+      <rect x="-270" y="-172" width="540" height="344" rx="44" fill="url(#shine)"/>
+      <!-- chip -->
+      <rect x="-222" y="-118" width="80" height="60" rx="12" fill="#0057FF" opacity="0.85"/>
+      <!-- stripe lines representing card number -->
+      <rect x="-222" y="18" width="230" height="18" rx="9" fill="#0057FF" opacity="0.55"/>
+      <rect x="-222" y="54" width="150" height="18" rx="9" fill="#0057FF" opacity="0.3"/>
+      <!-- small star / dot accent, like a loyalty mark -->
+      <circle cx="205" cy="-88" r="34" fill="#0057FF" opacity="0.9"/>
+      <path d="M205 -104 L212 -91 L226 -89 L216 -79 L219 -65 L205 -72 L191 -65 L194 -79 L184 -89 L198 -91 Z" fill="#FFFFFF"/>
+    </g>
+  </g>
+</svg>

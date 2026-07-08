@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Мои карты</title>
+<meta name="description" content="Хранение дисконтных и бонусных карт с QR-кодами и штрих-кодами">
+
+<meta name="theme-color" content="#0057FF">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Мои карты">
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+  <header class="topbar">
+    <h1>Карты</h1>
+    <div class="topbar-actions">
+      <button id="backupBtn" class="icon-btn" aria-label="Резервная копия">
+        <svg viewBox="0 0 24 24" width="19" height="19"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      </button>
+      <button id="addBtn" class="icon-btn accent" aria-label="Добавить карту">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="stackWrap" class="stack-wrap">
+    <div id="stack" class="stack"></div>
+    <div id="emptyState" class="empty-state" hidden>
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" width="40" height="40"><rect x="2" y="6" width="20" height="13" rx="3" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M2 10h20" stroke="currentColor" stroke-width="1.6"/></svg>
+      </div>
+      <p>Пока нет ни одной карты</p>
+      <p class="empty-sub">Нажмите «+», чтобы добавить первую дисконтную карту</p>
+    </div>
+  </main>
+</div>
+
+<!-- Bottom action sheet: edit / delete -->
+<div id="sheetBackdrop" class="sheet-backdrop" hidden></div>
+<div id="actionSheet" class="action-sheet" hidden>
+  <div class="sheet-group">
+    <button id="actionEdit" type="button">Изменить</button>
+    <div class="sheet-divider"></div>
+    <button id="actionDelete" type="button" class="destructive">Удалить карту</button>
+  </div>
+  <button id="actionCancel" type="button" class="sheet-cancel">Отмена</button>
+</div>
+
+<!-- Delete confirm -->
+<div id="confirmBackdrop" class="sheet-backdrop" hidden></div>
+<div id="confirmSheet" class="action-sheet" hidden>
+  <div class="sheet-group">
+    <div class="confirm-text">Удалить карту без возможности восстановления?</div>
+    <div class="sheet-divider"></div>
+    <button id="confirmDelete" type="button" class="destructive">Удалить</button>
+  </div>
+  <button id="confirmCancel" type="button" class="sheet-cancel">Отмена</button>
+</div>
+
+<!-- Add / edit form -->
+<div id="formOverlay" class="form-overlay" hidden>
+  <form id="cardForm" class="form-sheet" novalidate>
+    <div class="form-header">
+      <button type="button" id="formCancel" class="text-btn">Отмена</button>
+      <h2 id="formTitle">Новая карта</h2>
+      <button type="submit" id="formSave" class="text-btn save-btn">Готово</button>
+    </div>
+
+    <div class="form-body">
+
+      <section class="form-preview">
+        <div id="previewCard" class="card preview-only">
+          <div class="card-face card-front">
+            <div class="card-front-content">
+              <div class="card-name" id="previewName">Название</div>
+              <div class="card-brand" id="previewBrand">Магазин</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-group">
+        <label class="field-label">Фото карты (необязательно)</label>
+        <div class="photo-row">
+          <div id="photoPreview" class="photo-preview">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 7h3l2-2h6l2 2h3v12H4z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div class="photo-actions">
+            <label class="btn-secondary" for="photoInput">Выбрать фото</label>
+            <input type="file" id="photoInput" accept="image/*" hidden>
+            <button type="button" id="photoRemove" class="btn-secondary destructive-text" hidden>Удалить фото</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-group">
+        <label class="field-label" for="nameInput">Название карты</label>
+        <input type="text" id="nameInput" placeholder="Например, «Пятёрочка»" maxlength="40" required>
+      </section>
+
+      <section class="form-group">
+        <label class="field-label" for="brandInput">Магазин / сеть (необязательно)</label>
+        <input type="text" id="brandInput" placeholder="Например, «Пятёрочка»" maxlength="40">
+      </section>
+
+      <section class="form-group">
+        <label class="field-label">Цвет карты</label>
+        <div id="colorSwatches" class="color-swatches"></div>
+      </section>
+
+      <section class="form-group">
+        <label class="field-label">Тип кода</label>
+        <div class="segmented" id="codeTypeSeg">
+          <button type="button" class="seg-btn active" data-type="qr">QR-код</button>
+          <button type="button" class="seg-btn" data-type="barcode">Штрих-код</button>
+        </div>
+      </section>
+
+      <section class="form-group" id="barcodeFormatGroup" hidden>
+        <label class="field-label" for="barcodeFormat">Формат штрих-кода</label>
+        <select id="barcodeFormat">
+          <option value="CODE128">CODE 128 (универсальный)</option>
+          <option value="EAN13">EAN-13</option>
+          <option value="EAN8">EAN-8</option>
+          <option value="UPC">UPC-A</option>
+          <option value="CODE39">CODE 39</option>
+          <option value="ITF14">ITF-14</option>
+          <option value="codabar">Codabar</option>
+        </select>
+      </section>
+
+      <section class="form-group">
+        <label class="field-label" for="codeValueInput">Номер карты / значение кода</label>
+        <input type="text" id="codeValueInput" placeholder="Введите или отсканируйте номер" required inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <p class="field-hint">Это значение будет закодировано в QR или штрих-код на обратной стороне карты.</p>
+      </section>
+
+    </div>
+  </form>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<!-- Полноэкранный просмотр кода: сплошной белый фон для максимального
+     контраста при сканировании (реальная яркость экрана из браузера
+     недоступна ни на одной платформе) -->
+<!-- Резервная копия: экспорт / импорт -->
+<div id="backupBackdrop" class="sheet-backdrop" hidden></div>
+<div id="backupSheet" class="action-sheet" hidden>
+  <div class="sheet-group">
+    <button id="exportAction" type="button">Экспортировать резервную копию</button>
+    <div class="sheet-divider"></div>
+    <button id="importAction" type="button">Импортировать из файла</button>
+  </div>
+  <button id="backupCancel" type="button" class="sheet-cancel">Отмена</button>
+</div>
+<input type="file" id="importInput" accept="application/json,.json" hidden>
+
+<div id="zoomOverlay" class="zoom-overlay" hidden>
+  <button id="zoomClose" class="zoom-close" type="button" aria-label="Закрыть">
+    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+  </button>
+  <div class="zoom-cardname" id="zoomCardName"></div>
+  <div id="zoomCodeArea" class="zoom-code-area"></div>
+  <div class="zoom-value" id="zoomCodeValue"></div>
+</div>
+
+<script src="qrcode.min.js" defer></script>
+<script src="jsbarcode.min.js" defer></script>
+<script src="db.js" defer></script>
+<script src="codegen.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>
